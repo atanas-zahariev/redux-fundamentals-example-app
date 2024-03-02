@@ -2,6 +2,7 @@ import React from 'react'
 
 import { availableColors, capitalize } from '../filters/colors'
 import { StatusFilters } from '../filters/filtersSlice'
+import { useDispatch, useSelector } from 'react-redux'
 
 const RemainingTodos = ({ count }) => {
   const suffix = count === 1 ? '' : 's'
@@ -73,20 +74,26 @@ const ColorFilters = ({ value: colors, onChange }) => {
 }
 
 const Footer = () => {
-  const colors = []
-  const status = StatusFilters.All
-  const todosRemaining = 1
+  const dispatch = useDispatch()
 
-  const onColorChange = (color, changeType) =>
-    console.log('Color change: ', { color, changeType })
-  const onStatusChange = (status) => console.log('Status change: ', status)
+  const todosRemaining = useSelector(state => {
+    const uncompletedTodos = state.todos.filter(todo => !todo.completed)
+    return uncompletedTodos.length
+  })
+
+  const { status, colors } = useSelector(state => state.filters)
+
+  const onColorChange = (color, changeType) => console.log('Color change: ', { color, changeType })
+  const onStatusChange = (status) => {
+    dispatch({ type: 'filters/statusFilterChanged', payload: status })
+  }
 
   return (
     <footer className="footer">
       <div className="actions">
         <h5>Actions</h5>
         <button className="button">Mark All Completed</button>
-        <button className="button">Clear Completed</button>
+        <button className="button" onClick={() => { dispatch({ type: 'todos/completedCleared' }) }}>Clear Completed</button>
       </div>
 
       <RemainingTodos count={todosRemaining} />

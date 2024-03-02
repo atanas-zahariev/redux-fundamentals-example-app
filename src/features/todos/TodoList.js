@@ -1,20 +1,18 @@
 import React from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector, shallowEqual } from 'react-redux'
 import TodoListItem from './TodoListItem'
 
-const selector = state => state.todos
-
+const idSelector = (state) => {
+  return state.todos.map((todo) => todo.id)
+}
 const TodoList = () => {
-  const todos = useSelector(selector);
-  const dispatch = useDispatch()
+  const todosId = useSelector(idSelector, shallowEqual);
 
-  const renderedListItems = todos.map((todo) => {
+  const renderedListItems = todosId.map((todoId) => {
     return <
-      TodoListItem key={todo.id}
-      todo={todo}
-      onDelete={() => { dispatch({ type: 'todos/todoDeleted', payload: todo.id }) }}
-      onCompletedChange={() => { dispatch({ type: 'todos/todoToggled', payload: todo.id }) }}
-      onColorChange={(value) => { dispatch({ type: 'todos/colorSelected', payload: { todoId: todo.id, color: value } }) }}
+      TodoListItem key={todoId}
+      id={todoId}
+
     />
   })
 
