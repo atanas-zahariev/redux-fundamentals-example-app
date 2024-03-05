@@ -6,12 +6,11 @@ import { availableColors, capitalize } from '../filters/colors'
 import { useDispatch, useSelector } from 'react-redux'
 
 const todoSelector = (state, todoId) => {
-  return state.todos.find(todo => todo.id === todoId)
+  return state.todos.filter(todo => todo.id === todoId)[0]
 }
 
 const TodoListItem = ({  id }) => {
   const todo = useSelector(state => todoSelector(state, id))
-  
   const { text, completed, color } = todo
   const dispatch = useDispatch()
 

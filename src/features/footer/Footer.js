@@ -77,22 +77,25 @@ const Footer = () => {
   const dispatch = useDispatch()
 
   const todosRemaining = useSelector(state => {
+    state.todos = state.todos.filter(todo => !Array.isArray(todo))
+
     const uncompletedTodos = state.todos.filter(todo => !todo.completed)
     return uncompletedTodos.length
   })
 
   const { status, colors } = useSelector(state => state.filters)
 
-  const onColorChange = (color, changeType) => console.log('Color change: ', { color, changeType })
+  const onColorChange = (color, changeType) => {dispatch({type:'todos/filterByColor',payload: color})}
   const onStatusChange = (status) => {
     dispatch({ type: 'filters/statusFilterChanged', payload: status })
+    dispatch({type : 'todos/filterByStatus', payload: {status}})
   }
 
   return (
     <footer className="footer">
       <div className="actions">
         <h5>Actions</h5>
-        <button className="button">Mark All Completed</button>
+        <button className="button" onClick={() => { dispatch({ type: 'todos/allCompleted' }) }}>Mark All Completed</button>
         <button className="button" onClick={() => { dispatch({ type: 'todos/completedCleared' }) }}>Clear Completed</button>
       </div>
 
