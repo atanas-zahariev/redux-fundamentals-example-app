@@ -18,29 +18,11 @@ const colorSelector = (state) => {
   return selectedTodosByColor
 }
 
-const checkSelector = (state) => {
-  const check = state.todos.filter((todo) => todo.checked)
-
-  return check[0]
-}
-
 
 const TodoList = () => {
-  const checkForSearch = useSelector(checkSelector);
-  console.log(checkForSearch);
   const todosId = useSelector(idSelector, shallowEqual);
   const selectedTodos = useSelector(state => statusSelector(state));
   const selectedByColor = useSelector(state => colorSelector(state));
-
-  if (checkForSearch && checkForSearch.checked) {
-    return (
-      <ul className="todo-list">
-        <li>
-          Nothing  found
-        </li>
-      </ul>
-    )
-  }
 
   let renderedListItems
 

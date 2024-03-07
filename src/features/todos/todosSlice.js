@@ -5,8 +5,11 @@ function nextTodoId(todos) {
   return maxId + 1
 }
 
+const colors = []
+
+
 export default function todosReducer(state = initialState, action) {
-  state = state.filter(todo => !todo.selectedByState).filter(todo => !todo.selected).filter(todo => !todo.checked)
+  state = state.filter(todo => !todo.selectedByState).filter(todo => !todo.selected)
   switch (action.type) {
     case 'todos/todoAdded': {
       // Can return just the new todos array - no extra object around it
@@ -81,7 +84,14 @@ export default function todosReducer(state = initialState, action) {
     case 'todos/filterByColor': {
       const color = action.payload
 
-      const todosFilterByColor = state.filter((todo) => todo.color === color)
+      if (!colors.includes(color)) {
+        colors.push(color)
+      } else if (colors.includes(color)) {
+        let index = colors.indexOf(color)
+        colors.splice(index, 1)
+      }
+
+      const todosFilterByColor = state.filter((todo) => colors.includes(todo.color))
 
       const selectedByColor = { selected: todosFilterByColor }
 
@@ -94,7 +104,6 @@ export default function todosReducer(state = initialState, action) {
 
       return [
         ...state,
-        {checked:true}
       ]
 
 

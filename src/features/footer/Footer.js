@@ -77,18 +77,24 @@ const Footer = () => {
   const dispatch = useDispatch()
 
   const todosRemaining = useSelector(state => {
-    state.todos = state.todos.filter(todo => !Array.isArray(todo))
 
-    const uncompletedTodos = state.todos.filter(todo => !todo.completed)
+    const uncompletedTodos = state.todos
+      .filter(todo => !todo.completed)
+      .filter(todo => !todo.selectedByState)
+      .filter(todo => !todo.selected)
+
     return uncompletedTodos.length
   })
 
   const { status, colors } = useSelector(state => state.filters)
 
-  const onColorChange = (color, changeType) => {dispatch({type:'todos/filterByColor',payload: color})}
+  const onColorChange = (color, changeType ) => {
+    dispatch({ type: 'filters/colorFilterChanged', payload: { color, changeType } })
+    dispatch({ type: 'todos/filterByColor', payload: color })
+  }
   const onStatusChange = (status) => {
     dispatch({ type: 'filters/statusFilterChanged', payload: status })
-    dispatch({type : 'todos/filterByStatus', payload: {status}})
+    dispatch({ type: 'todos/filterByStatus', payload: { status } })
   }
 
   return (
