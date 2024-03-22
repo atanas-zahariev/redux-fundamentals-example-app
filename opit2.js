@@ -1,8 +1,6 @@
 const a = 1;
 const b = 2
 
-let newContex = null;
-
 
 function add(ctx) {
     // console.log(ctx.showView('multiplay'));
@@ -18,7 +16,6 @@ function multiplay(ctx) {
 function divide(ctx) {
     console.log(a / b);
 }
-
 
 const viewImage = {
     'add': add,
@@ -37,22 +34,59 @@ function showView(name) {
     }
 }
 
-// console.log(showView('add'));
 
-function composer(n, ...args) {
-    if (n === undefined) {
-        n = args.length - 1
-    }
-    if (n > -1) {
-        args[n]()
-        return composer(n - 1, ...args)
-    }
+function wrapDispatch1(next) {
+    return function handleAction1(action) {
+        console.log('1')
+        console.log(next);
 
+        return next(action)
+    }
 }
 
-composer(undefined, add, multiplay, divide)
-// console.log('----------------------');
-// add(multiplay(divide()))
+function wrapDispatch2(next) {
+    return function handleAction2(action) {
+        console.log('2')
+        console.log(next);
+
+        return next(action)
+    }
+}
+
+function wrapDispatch3(next) {
+    return function handleAction3(action) {
+        console.log('3')
+        console.log(next);
+
+        return next(action)
+    }
+}
+
+function compose(...funcs) {
+    if (funcs.length === 0) {
+        return arg => arg
+    }
+
+    if (funcs.length === 1) {
+        return funcs[0]
+    }
+
+    return funcs.reduce(helper)
+}
+
+function helper(a, b) {
+    return function outsider(...args) {
+        return a(b(...args))
+    }
+}
+
+
+ compose(wrapDispatch1, wrapDispatch2, wrapDispatch3)(add)()
+
+
+
+
+
 
 
 
