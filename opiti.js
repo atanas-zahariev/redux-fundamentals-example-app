@@ -50,13 +50,32 @@ function compose(...funcs) {
     }
 
     return funcs.reduce((a, b) => (...args) => a(b(...args)))
-    // връща функция за която е в сила правилото, че когато бъде извикана, изпълнението на вътрешната функция е аргумент на външната.
-    // Или ,ако са три функции,какъвто е случая, извикването на последната подадена на reduce функция,
-    // е аргумент на втората,чието извикване е аргумент на първата и най-външна функция.
-    // Друг начин за описване е - wrapDispatch3 е аргумент на wrapDispatch2 която е аргумент на wrapDispatch1.
-    // Следователно след изпълнението ще завършим с handleAction1 в чиито closure аргумент e handleAction2,което означава
-    // че при изпълнението на handleAction1 ще извикаме изпълнението на handleAction2, която от своя страна ще извика handleAction3,
-    // която пък от своя страна като завършващ етап ще изпъни dispatch.
+    // (...args) => a(b(...args)) === (...args) => wrapDispatch1(wrapDispatch2(wrapDispatch3())),
+
+    // compose(...chain)(store.dispatch)
+    // след изпълнение на горния ред:
+    // wrapDispatch1() връща:
+
+    // handleAction1(handleAction2){
+    //   do somenthing..
+
+    //   return next(action) === return handleAction2(handleAction3),тъй като
+    //   wrapDispatch2(next),ще върне handleAction2,което се превръща в аргумент за wrapDispatch1 или неговият next аргумент
+    // }
+
+    // handleAction2(handleAction3){
+    //   do somenthing..
+
+    //   return next(action) === return handleAction3(dispatch),тъй като
+    //   wrapDispatch3(next),ще върне handleAction3,което се превръща в аргумент за wrapDispatch2 или неговият next аргумент
+    // }
+
+    // handleAction3(dispatch){
+    //   do somenthing..
+
+    //   return next(action) === return dispatch(action )
+    // }
+
 }
 
 function applyMiddleware(...middlewares) {
